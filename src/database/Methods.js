@@ -2,46 +2,27 @@ class Methods {
   async auth(email, password) {
     if (email && password) {
       if (email === mockedUsername && password === mockedPassword) {
-        let token = jwt.sign({ email }, process.env.JWT_SECRET, {
-          expiresIn: "24h", // expires in 24 hours
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+          expiresIn: "6h",
         });
-        // return the JWT token for the future API calls
-        res.json({
+        return res.json({
           success: true,
           message: "Authentication successful!",
           token: token,
         });
       } else {
-        res.send(403).json({
+        return res.send(403).json({
           success: false,
           message: "Incorrect email or password",
         });
       }
     } else {
-      res.send(400).json({
+      return res.send(400).json({
         success: false,
         message: "Authentication failed! Please check the request",
       });
     }
   }
-}
-
-// Starting point of the server
-function main() {
-  let app = express(); // Export app for other routes to use
-  let handlers = new HandlerGenerator();
-  const port = process.env.PORT || 8000;
-  app.use(
-    bodyParser.urlencoded({
-      // Middleware
-      extended: true,
-    })
-  );
-  app.use(bodyParser.json());
-  // Routes & Handlers
-  app.post("/login", handlers.login);
-  app.get("/", middleware.checkToken, handlers.index);
-  app.listen(port, () => console.log(`Server is listening on port: ${port}`));
 }
 
 module.exports = Methods;
